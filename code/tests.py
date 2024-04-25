@@ -12,7 +12,7 @@ class TestUser(unittest.TestCase):
         "password": "password",
         "email": "gmail@gmail.com",
     }
-    
+
     def setUp(self) -> None:
         User.users = {}
         User.emails = []
@@ -78,7 +78,7 @@ class TestUser(unittest.TestCase):
 
 class TestAdmin(TestUser):
     def test_admin_creation(self):
-        
+
         admin = Admin(**self.base_data)
         admin.register()
         self.user_was_created(user=admin)
@@ -96,7 +96,8 @@ class TestSeller(TestUser):
     def test_seller_creation(self):
         seller = Seller(**self.base_data)
         seller.register()
-        self.user_was_created(user=seller)     
+        self.user_was_created(user=seller)
+
 
 if __name__ == "__main__":
     unittest.main()
