@@ -12,6 +12,9 @@ class TestUser(unittest.TestCase):
         "password": "password",
         "email": "gmail@gmail.com",
     }
+    def setUp(self) -> None:
+        User.users = {}
+        return super().setUp()
 
     def __test_user_was_created(self, user: User):
 
