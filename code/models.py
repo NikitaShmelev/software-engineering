@@ -36,7 +36,7 @@ class Transaction:
         return 1 if not current_ids else max(current_ids) + 1
 
     def submit(self):
-        self.__generate_id()
+        self.id = self.__generate_id()
         self.transactions[self.id] = self
 
     def finish(self):
@@ -68,9 +68,9 @@ class Item:
 
     def submit(self) -> None:
         self.id = self.__generate_id()
+        Item.items[self.id] = self
 
     def delete(self) -> None:
-        print("Item was deleted")
         del self.items[self.id]
 
     def buy(self, buyer: Buyer) -> None:
