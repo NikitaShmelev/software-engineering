@@ -99,5 +99,125 @@ class TestSeller(TestUser):
         self.user_was_created(user=seller)
 
 
+class TestItem(unittest.TestCase):
+    def setUp(self):
+        User.users = {}
+        User.emails = []
+        self.seller = Seller(
+            name="John",
+            surname="Doe",
+            password="pass123",
+            phone_number=1234567890,
+            email="seller@example.com",
+        )
+        self.buyer = Buyer(
+            name="Jane",
+            surname="Doe",
+            password="pass123",
+            phone_number=9876543210,
+            email="buyer@example.com",
+        )
+        self.seller.register()
+        self.buyer.register()
+        self.item = Item(
+            category="Electronics",
+            title="Phone",
+            price=999,
+            description="Latest smartphone",
+            seller=self.seller,
+        )
+
+    def test_item_creation(self):
+        self.assertEqual(self.item.category, "Electronics")
+        self.assertEqual(self.item.title, "Phone")
+        self.assertEqual(self.item.price, 999)
+        self.assertEqual(self.item.description, "Latest smartphone")
+        self.assertEqual(self.item.seller, self.seller)
+        self.assertEqual(self.item.status, Item.Statuses.AVAILABLE)
+
+    def test_generate_id(self):
+        Item.items = {}
+        self.item.submit()
+        self.assertEqual(self.item.id, 1)
+        item2 = Item("Electronics", "Laptop", 1999, "Latest laptop", self.seller)
+        item2.submit()
+        self.assertEqual(item2.id, 2)
+
+    def test_edit_item(self):
+        self.item.submit()
+        self.item.edit(title="New Phone", price=899)
+        self.assertEqual(self.item.title, "New Phone")
+        self.assertEqual(self.item.price, 899)
+
+    def test_delete_item(self):
+        Item.items = {}
+        self.item.submit()
+        self.item.delete()
+        self.assertNotIn(self.item.id, Item.items)
+
+    def test_buy_item(self):
+        Item.items = {}
+        self.item.submit()
+        self.item.buy(self.buyer)
+        # breakpoint()
+        self.assertIn(self.item.id, Transaction.transactions)
+        transaction = Transaction.transactions[self.item.id]
+        self.assertEqual(transaction.item, self.item)
+        self.assertEqual(transaction.buyer, self.buyer)
+        self.assertEqual(transaction.status, Transaction.Statuses.PENDING)
+
+
+class TestTransaction(unittest.TestCase):
+    def setUp(self):
+        User.users = {}
+        User.emails = []
+        self.seller = Seller(
+            name="John",
+            surname="Doe",
+            password="pass123",
+            phone_number=1234567890,
+            email="seller@example.com",
+        )
+        self.buyer = Buyer(
+            name="Jane",
+            surname="Doe",
+            password="pass123",
+            phone_number=9876543210,
+            email="buyer@example.com",
+        )
+        self.seller.register()
+        self.buyer.register()
+        self.item = Item(
+            category="Electronics",
+            title="Phone",
+            price=999,
+            description="Latest smartphone",
+            seller=self.seller,
+        )
+        self.item.submit()
+        self.transaction = Transaction(self.item, self.buyer)
+
+    def test_transaction_creation(self):
+        self.assertEqual(self.transaction.item, self.item)
+        self.assertEqual(self.transaction.buyer, self.buyer)
+        self.assertEqual(self.transaction.status, Transaction.Statuses.PENDING)
+        self.assertIsNone(self.transaction.finished_date)
+
+    def test_submit_transaction(self):
+        Transaction.transactions = {}
+        self.transaction.submit()
+        self.assertIn(self.transaction.id, Transaction.transactions)
+        self.assertEqual(
+            Transaction.transactions[self.transaction.id], self.transaction
+        )
+
+    def test_finish_transaction(self):
+        self.transaction.submit()
+        self.transaction.finish()
+        self.assertEqual(self.transaction.status, Transaction.Statuses.SUCCESS)
+        self.assertIsNotNone(self.transaction.finished_date)
+        self.assertEqual(self.item.status, Item.Statuses.SOLD)
+
+
 if __name__ == "__main__":
     unittest.main()
