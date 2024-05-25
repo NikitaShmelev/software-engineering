@@ -1,12 +1,10 @@
+import random
+
 from base_models import User
 from datetime import datetime
 
 
 class Buyer(User):
-    pass
-
-
-class Seller(User):
     pass
 
 
@@ -83,3 +81,8 @@ class Item:
                 setattr(self, key, value)
         except Exception as e:
             print("Error during update", e)
+
+
+class Seller(User):
+    def buy(self, item: Item, buyer: Buyer):
+        self.item = Transaction(item, buyer)
