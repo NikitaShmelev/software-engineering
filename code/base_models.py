@@ -10,7 +10,7 @@ class User:
     def __init__(
         self, name, surname, password, phone_number, email, nickname=None
     ) -> None:
-        self.id: int = None
+        self.id: int | None = None
         self.name: str = name
         self.surname: str = surname
         self.nickname: str = nickname
@@ -20,7 +20,7 @@ class User:
         self.email: str = email
         self.is_created: bool = False
         self.is_logged: bool = False
-        self.__token: int = None
+        self.__token: int | None = None
 
     def __encrypt_password(self, password) -> str:
         return str(hash(password))

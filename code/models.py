@@ -22,12 +22,12 @@ class Transaction:
         PENDING = "PENDING"
 
     def __init__(self, item: "Item", buyer: Buyer) -> None:
-        self.id: int = None
+        self.id: int | None = None
         self.item: Item = item
         self.buyer: Buyer = buyer
         self.status: str = self.Statuses.PENDING
         self.created_date: datetime = datetime.now()
-        self.finished_date: datetime = None
+        self.finished_date: datetime | None = None
 
     def __generate_id(self) -> int:
         current_ids = self.transactions.keys()
@@ -51,7 +51,7 @@ class Item:
         SOLD = "SOLD"
 
     def __init__(self, category, title, price, description, seller) -> None:
-        self.id: int = None
+        self.id: int | None = None
         self.category: str = category
         self.title: str = title
         self.price: int = price
